@@ -1,9 +1,15 @@
 asgiref==3.4.1
 autopep8==1.5.7
+bcrypt==3.2.0
+cffi==1.15.0
 Django==3.0.8
 django-cors-headers==3.10.0
 djangorestframework==3.12.4
 pycodestyle==2.8.0
+pycparser==2.20
+PyJWT==2.3.0
+python-decouple==3.5
 pytz==2021.3
+six==1.16.0
 sqlparse==0.4.2
 toml==0.10.2

@@ -1,12 +1,7 @@
-from rest_framework import routers
-from django.urls import path, include
-from .views import PassengerViewSet, register_passenger
-
-router = routers.DefaultRouter()
-
-router.register(r'', PassengerViewSet)
+from django.urls import path
+from .views import register_passenger, login_passenger
 
 urlpatterns = [
     path('register/', register_passenger, name='api.register_passenger'),
-    path('', include(router.urls))
+    path('login/', login_passenger, name='api.login_passenger'),
 ]
