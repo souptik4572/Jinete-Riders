@@ -8,6 +8,7 @@ import bcrypt
 import jwt
 from decouple import config
 from datetime import datetime, timedelta
+from ..middleware.auth_strategy import AuthStrategyMiddleware
 
 ACCESS_SECRET_TOKEN = config('ACCESS_SECRET_TOKEN')
 BCRYPT_SALT = int(config('BCRYPT_SALT'))
@@ -17,6 +18,20 @@ def are_passwords_matching(given_password, actual_password):
     return bcrypt.checkpw(given_password.encode('utf-8'), actual_password.encode('utf-8'))
 
 # Create your views here.
+
+
+@csrf_exempt
+def edit_passenger_data(request):
+    if request.method == 'PATCH':
+        data = json.loads(request.body)
+        return JsonResponse({
+            'success': True
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a PATCH request for passenger data updation'
+        })
 
 
 @csrf_exempt
