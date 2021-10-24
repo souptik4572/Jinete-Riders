@@ -136,8 +136,3 @@ def register_passenger(request):
             'success': False,
             'message': 'Please only provide a PUT request with necessary data'
         })
-
-
-class PassengerViewSet(viewsets.ModelViewSet):
-    queryset = Passenger.objects.all().order_by('id')
-    serializer_class = PassengerSerializer
