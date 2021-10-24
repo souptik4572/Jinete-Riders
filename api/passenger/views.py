@@ -8,7 +8,6 @@ import bcrypt
 import jwt
 from decouple import config
 from datetime import datetime, timedelta
-from ..middleware.auth_strategy import AuthStrategyMiddleware
 
 ACCESS_SECRET_TOKEN = config('ACCESS_SECRET_TOKEN')
 BCRYPT_SALT = int(config('BCRYPT_SALT'))
@@ -19,14 +18,35 @@ def are_passwords_matching(given_password, actual_password):
 
 # Create your views here.
 
-
 @csrf_exempt
 def edit_passenger_data(request):
     if request.method == 'PATCH':
         data = json.loads(request.body)
-        return JsonResponse({
-            'success': True
-        })
+        try:
+            passenger = Passenger.objects.get(pk=request.session['user']['id'])
+            if 'name' in data:
+                passenger.name = data['name']
+            if 'email' in data:
+                passenger.email = data['email']
+            if 'phone' in data:
+                passenger.phone = data['phone']
+            if 'city' in data:
+                passenger.city = data['city']
+            if 'country' in data:
+                passenger.country = data['country']
+            if 'profile_image' in data:
+                passenger.profile_image = data['profile_image']
+            passenger.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Profile has been updated successfully',
+                'passenger': PassengerSerializer(passenger).data
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
     else:
         return JsonResponse({
             'success': False,
