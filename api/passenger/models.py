@@ -12,6 +12,8 @@ class Passenger(models.Model):
     country = models.CharField(max_length=60)
     profile_image = models.CharField(max_length=256, blank=True, null=True)
     rating = models.FloatField(default=2.5)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
