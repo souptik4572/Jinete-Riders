@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from datetime import datetime, timedelta
 
 # Create your models here.
@@ -23,8 +24,8 @@ class Passenger(models.Model):
 class Token(models.Model):
     passenger = models.ForeignKey(
         Passenger, on_delete=models.CASCADE)
-    token = models.CharField(max_length=16)
+    token = models.CharField(max_length=100)
     expiry_time = models.DateTimeField(
-        default=(datetime.now() + timedelta(hours=1)))
+        default=(timezone.now() + timedelta(hours=1)))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

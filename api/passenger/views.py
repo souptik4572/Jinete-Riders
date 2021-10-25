@@ -9,6 +9,9 @@ from decouple import config
 from datetime import datetime, timedelta
 import os
 import binascii
+import pytz
+
+utc=pytz.UTC
 
 ACCESS_SECRET_TOKEN = config('ACCESS_SECRET_TOKEN')
 BCRYPT_SALT = int(config('BCRYPT_SALT'))
@@ -18,7 +21,6 @@ def are_passwords_matching(given_password, actual_password):
     return bcrypt.checkpw(given_password.encode('utf-8'), actual_password.encode('utf-8'))
 
 # Create your views here.
-
 
 @csrf_exempt
 def update_password(request):
@@ -36,6 +38,12 @@ def update_password(request):
                     'success': False,
                     'message': 'Invalid or expired password reset token'
                 }, status=404)
+            if utc.localize(datetime.now()) > password_reset_token.expiry_time:
+                password_reset_token.delete()
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Expired password reset token'
+                }, status=404)
             if not bcrypt.checkpw(token.encode('utf-8'), password_reset_token.token.encode('utf-8')):
                 return JsonResponse({
                     'success': False,
@@ -45,6 +53,7 @@ def update_password(request):
                 password.encode('utf-8'), bcrypt.gensalt(BCRYPT_SALT))).replace("b'", "").replace("'", "")
             passenger.password = hashed_password
             passenger.save()
+            password_reset_token.delete()
             return JsonResponse({
                 'success': True
             })
@@ -80,7 +89,7 @@ def request_password_reset(request):
             token = Token.objects.filter(passenger_id=passenger.id).filter()
             if token:
                 token.delete()
-            reset_token = binascii.b2a_hex(os.urandom(16))
+            reset_token = binascii.b2a_hex(os.urandom(8))
             hash = str(bcrypt.hashpw(reset_token, bcrypt.gensalt(
                 BCRYPT_SALT))).replace("b'", "").replace("'", "")
             token = Token.objects.create(passenger=passenger, token=hash)
