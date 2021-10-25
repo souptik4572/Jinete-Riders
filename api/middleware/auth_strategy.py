@@ -20,9 +20,9 @@ class AuthStrategyMiddleware():
                 return JsonResponse({
                     'success': False,
                     'message': 'Such a route does not exist'
-                })
+                }, status=404)
             try:
-                token = request.headers.get('Authorization').split(' ')[1]
+                token = request.headers.get('Authorization', None).split(' ')[1]
                 verified_user = jwt.decode(
                     token, ACCESS_SECRET_TOKEN, algorithms=['HS512'])
                 request.session['user'] = PassengerSerializer(
@@ -31,6 +31,6 @@ class AuthStrategyMiddleware():
                 return JsonResponse({
                     'success': False,
                     'message': str(e)
-                })
+                }, status=404)
         response = self.get_response(request)
         return response
