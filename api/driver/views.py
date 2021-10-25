@@ -101,7 +101,7 @@ def request_password_reset(request):
                 'receiver': email,
 
             }
-            send_password_reset_email(reset_data)
+            send_password_reset_email(reset_data, True)
             return JsonResponse({
                 'success': True,
             }, status=200)
