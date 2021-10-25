@@ -10,8 +10,9 @@ from datetime import datetime, timedelta
 import os
 import binascii
 import pytz
+from ..utils.mailer import send_password_reset_email
 
-utc=pytz.UTC
+utc = pytz.UTC
 
 ACCESS_SECRET_TOKEN = config('ACCESS_SECRET_TOKEN')
 BCRYPT_SALT = int(config('BCRYPT_SALT'))
@@ -21,6 +22,7 @@ def are_passwords_matching(given_password, actual_password):
     return bcrypt.checkpw(given_password.encode('utf-8'), actual_password.encode('utf-8'))
 
 # Create your views here.
+
 
 @csrf_exempt
 def update_password(request):
@@ -89,14 +91,19 @@ def request_password_reset(request):
             token = Token.objects.filter(passenger_id=passenger.id).filter()
             if token:
                 token.delete()
-            reset_token = binascii.b2a_hex(os.urandom(8))
+            reset_token = binascii.b2a_hex(os.urandom(16))
             hash = str(bcrypt.hashpw(reset_token, bcrypt.gensalt(
                 BCRYPT_SALT))).replace("b'", "").replace("'", "")
             token = Token.objects.create(passenger=passenger, token=hash)
+            reset_data = {
+                'token': str(reset_token).replace("b'", "").replace("'", ""),
+                'id': PassengerSerializer(passenger).data['id'],
+                'receiver': email,
+
+            }
+            send_password_reset_email(reset_data)
             return JsonResponse({
                 'success': True,
-                'passenger_id': PassengerSerializer(passenger).data['id'],
-                'reset_token': str(reset_token).replace("b'", "").replace("'", "")
             }, status=200)
         except KeyError:
             return JsonResponse({
