@@ -56,7 +56,7 @@ def update_password(request):
             password_reset_token.delete()
             return JsonResponse({
                 'success': True
-            })
+            }, status=201)
         except Passenger.DoesNotExist:
             return JsonResponse({
                 'success': False,
