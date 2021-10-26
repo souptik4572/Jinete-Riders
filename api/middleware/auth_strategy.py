@@ -8,7 +8,7 @@ from decouple import config
 
 ACCESS_SECRET_TOKEN = config('ACCESS_SECRET_TOKEN')
 auth_strategy_paths = {'/api/passenger/update-profile/',
-                       '/api/driver/update-profile/', 'api/ride/passenger/new/'}
+                       '/api/driver/update-profile/', '/api/ride/passenger/new/', '/api/ride/passenger/upcoming-rides/'}
 
 
 class AuthStrategyMiddleware():
@@ -40,5 +40,7 @@ class AuthStrategyMiddleware():
                     'success': False,
                     'message': str(e)
                 }, status=404)
+        else:
+            request.session['user'] = None
         response = self.get_response(request)
         return response
