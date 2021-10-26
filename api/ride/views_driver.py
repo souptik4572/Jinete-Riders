@@ -5,7 +5,35 @@ from .models import Ride
 from ..driver.models import Driver
 from django.views.decorators.csrf import csrf_exempt
 import json
-from ..utils.ride_type_constants import ACCEPTED, CANCELLED, INITIATED, STARTED
+from ..utils.ride_type_constants import ACCEPTED, COMPLETED, INITIATED, STARTED
+
+@csrf_exempt
+def complete_ride(request, ride_id):
+    if request.method == 'PATCH':
+        ride = Ride.objects.get(
+            driver__id=request.session['user']['id'], id=ride_id)
+        if not ride:
+            return JsonResponse({
+                'success': False,
+                'message': 'Ride with given id does not exist'
+            }, status=404)
+        if ride.ride_status != STARTED:
+            return JsonResponse({
+                'success': False,
+                'message': 'Ride with given id cannot be completed as it is not started'
+            }, status=404)
+        ride.ride_status = COMPLETED
+        ride.save()
+        return JsonResponse({
+            'success': True,
+            'message': 'Successfully changed ride status to completed',
+            'ride': RideSerializer(ride).data
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a PATCH request with ride id in the parameter'
+        }, status=404)
 
 @csrf_exempt
 def get_all_past_rides_driver(request):
