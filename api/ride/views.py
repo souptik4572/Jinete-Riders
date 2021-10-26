@@ -5,7 +5,7 @@ from .models import Ride
 from ..passenger.models import Passenger
 from django.views.decorators.csrf import csrf_exempt
 import json
-from ..utils.ride_type_constants import ACCEPTED, CANCELLED
+from ..utils.ride_type_constants import ACCEPTED, CANCELLED, STARTED
 
 
 # Create your views here.
@@ -106,10 +106,10 @@ def get_all_past_rides(request):
     if request.method == 'GET':
         try:
             past_rides = Ride.objects.filter(
-                passenger__id=request.session['user']['id'], ride_status__gt=ACCEPTED)
+                passenger__id=request.session['user']['id'], ride_status__gt=STARTED)
             return JsonResponse({
                 'success': True,
-                'message': 'All the incoming rides',
+                'message': 'All the past rides',
                 'rides': RideSerializer(past_rides, many=True).data
             })
         except Exception as e:

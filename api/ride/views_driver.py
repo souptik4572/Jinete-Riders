@@ -7,6 +7,27 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from ..utils.ride_type_constants import ACCEPTED, CANCELLED, INITIATED, STARTED
 
+@csrf_exempt
+def get_all_past_rides_driver(request):
+    if request.method == 'GET':
+        try:
+            past_rides = Ride.objects.filter(
+                driver__id=request.session['user']['id'], ride_status__gt=STARTED)
+            return JsonResponse({
+                'success': True,
+                'message': 'All the past rides',
+                'rides': RideSerializer(past_rides, many=True).data
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, status=404)
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a GET request'
+        }, status=404)
 
 @csrf_exempt
 def get_all_accepted_rides(request):
