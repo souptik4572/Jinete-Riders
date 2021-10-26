@@ -1,12 +1,47 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from .serializers import RideSerializer
 from .models import Ride
 from ..passenger.models import Passenger
 from django.views.decorators.csrf import csrf_exempt
 import json
+from ..utils.ride_type_constants import ACCEPTED, CANCELLED
 
 
 # Create your views here.
+
+@csrf_exempt
+def get_all_upcoming_rides(request):
+    if request.method == 'GET':
+        try:
+            upcoming_rides = Ride.objects.filter(
+                passenger__id=request.session['user']['id'], ride_status__lte=ACCEPTED)
+            return JsonResponse({
+                'success': True,
+                'message': 'All the incoming rides',
+                'rides': RideSerializer(upcoming_rides, many=True).data
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, status=404)
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a GET request'
+        }, status=404)
+
+
+@csrf_exempt
+def get_all_past_rides(request):
+    if request.method == 'GET':
+        past_rides = Ride.objects.filter()
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a GET request'
+        }, status=404)
 
 
 @csrf_exempt

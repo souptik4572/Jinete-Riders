@@ -11,4 +11,4 @@ class RideSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ride
         fields = ('id', 'source', 'destination', 'estimated_time',
-                  'driver_rating', 'passenger_rating', 'passenger', 'driver')
+                  'driver_rating', 'passenger_rating', 'passenger', 'driver', 'ride_status')
