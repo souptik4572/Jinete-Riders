@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import book_new_ride, get_all_upcoming_rides, get_particular_ride, get_all_accepted_rides, cancel_particular_ride, get_all_past_rides
+from .views_passenger import book_new_ride, get_all_upcoming_rides, get_particular_ride, get_all_accepted_rides, cancel_particular_ride, get_all_past_rides
 from .views_driver import get_all_initiated_rides, accept_existing_ride, cancel_accepted_ride, get_particular_ride_driver, start_particular_ride, get_all_accepted_rides, get_all_past_rides_driver, complete_ride
 
 urlpatterns = [
