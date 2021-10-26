@@ -9,6 +9,74 @@ from ..utils.ride_type_constants import ACCEPTED, CANCELLED
 
 
 # Create your views here.
+@csrf_exempt
+def cancel_particular_ride(request, ride_id):
+    if request.method == 'DELETE':
+        ride = Ride.objects.filter(
+            passenger__id=request.session['user']['id'], id=ride_id).first()
+        if not ride:
+            return JsonResponse({
+                'success': False,
+                'message': 'Ride with given id does not exist'
+            }, status=404)
+        ride.ride_status = CANCELLED
+        ride.save()
+        return JsonResponse({
+            'success': True,
+            'message': 'Details of ride having given id',
+            'ride': RideSerializer(ride).data
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a DELETE request with ride id in the parameter'
+        }, status=404)
+
+
+@csrf_exempt
+def get_particular_ride(request, ride_id):
+    if request.method == 'GET':
+        ride = Ride.objects.filter(
+            passenger__id=request.session['user']['id'], id=ride_id).first()
+        if not ride:
+            return JsonResponse({
+                'success': False,
+                'message': 'Ride with given id does not exist'
+            }, status=404)
+        return JsonResponse({
+            'success': True,
+            'message': 'Details of ride having given id',
+            'ride': RideSerializer(ride).data
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a GET request with ride id in the parameter'
+        }, status=404)
+
+
+@csrf_exempt
+def get_all_accepted_rides(request):
+    if request.method == 'GET':
+        try:
+            accepted_rides = Ride.objects.filter(
+                passenger__id=request.session['user']['id'], ride_status=ACCEPTED)
+            return JsonResponse({
+                'success': True,
+                'message': 'All the incoming rides',
+                'rides': RideSerializer(accepted_rides, many=True).data
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, status=404)
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a GET request'
+        }, status=404)
+
 
 @csrf_exempt
 def get_all_upcoming_rides(request):
@@ -36,7 +104,19 @@ def get_all_upcoming_rides(request):
 @csrf_exempt
 def get_all_past_rides(request):
     if request.method == 'GET':
-        past_rides = Ride.objects.filter()
+        try:
+            past_rides = Ride.objects.filter(
+                passenger__id=request.session['user']['id'], ride_status__gt=ACCEPTED)
+            return JsonResponse({
+                'success': True,
+                'message': 'All the incoming rides',
+                'rides': RideSerializer(past_rides, many=True).data
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, status=404)
     else:
         return JsonResponse({
             'success': False,
