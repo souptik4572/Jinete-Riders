@@ -20,7 +20,7 @@ class Driver(models.Model):
     driving_license_no = models.CharField(max_length=15)
 
     def __str__(self):
-        self.name
+        return self.name
 
 
 class Token(models.Model):
@@ -32,4 +32,4 @@ class Token(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        self.expiry_time
+        return str(self.expiry_time)

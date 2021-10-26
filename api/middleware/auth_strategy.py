@@ -7,7 +7,8 @@ import jwt
 from decouple import config
 
 ACCESS_SECRET_TOKEN = config('ACCESS_SECRET_TOKEN')
-auth_strategy_paths = {'/api/passenger/update-profile/', '/api/driver/update-profile/'}
+auth_strategy_paths = {'/api/passenger/update-profile/',
+                       '/api/driver/update-profile/', 'api/ride/passenger/new/'}
 
 
 class AuthStrategyMiddleware():

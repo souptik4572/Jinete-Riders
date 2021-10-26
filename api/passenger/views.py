@@ -141,6 +141,11 @@ def edit_passenger_data(request):
                 'message': 'Profile has been updated successfully',
                 'passenger': PassengerSerializer(passenger).data
             }, status=201)
+        except Passenger.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Passenger with given id does not exist'
+            }, status=404)
         except Exception as e:
             return JsonResponse({
                 'success': False,
