@@ -63,7 +63,7 @@ def get_all_accepted_rides(request):
                 passenger__id=request.session['user']['id'], ride_status=ACCEPTED)
             return JsonResponse({
                 'success': True,
-                'message': 'All the incoming rides',
+                'message': 'All the accepted rides',
                 'rides': RideSerializer(accepted_rides, many=True).data
             })
         except Exception as e:
@@ -86,7 +86,7 @@ def get_all_upcoming_rides(request):
                 passenger__id=request.session['user']['id'], ride_status__lte=ACCEPTED)
             return JsonResponse({
                 'success': True,
-                'message': 'All the incoming rides',
+                'message': 'All the upcoming rides',
                 'rides': RideSerializer(upcoming_rides, many=True).data
             })
         except Exception as e:
