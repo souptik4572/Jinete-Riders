@@ -2,11 +2,13 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import timedelta
+from uuid import uuid4
 
 # Create your models here.
 
 
 class Driver(models.Model):
+    id = models.TextField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=60)
     email = models.CharField(max_length=320, unique=True)
     phone = models.CharField(max_length=15)
@@ -14,7 +16,8 @@ class Driver(models.Model):
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=60)
     profile_image = models.CharField(max_length=256, blank=True, null=True)
-    rating = models.FloatField(default=3, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    rating = models.FloatField(default=3, validators=[
+                               MinValueValidator(0.0), MaxValueValidator(5.0)])
     car_name = models.CharField(max_length=50)
     car_number = models.CharField(max_length=30)
     car_image = models.CharField(max_length=256)

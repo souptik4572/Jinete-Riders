@@ -2,11 +2,13 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import timedelta
+from uuid import uuid4
 
 # Create your models here.
 
 
 class Passenger(models.Model):
+    id = models.TextField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=60)
     email = models.CharField(max_length=320, unique=True)
     phone = models.CharField(max_length=15)
