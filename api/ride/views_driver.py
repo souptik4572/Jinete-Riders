@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.http import JsonResponse
 from rest_framework.fields import NOT_READ_ONLY_REQUIRED
 from .serializers import RideSerializer
@@ -6,6 +7,47 @@ from ..driver.models import Driver
 from django.views.decorators.csrf import csrf_exempt
 import json
 from ..utils.ride_type_constants import ACCEPTED, COMPLETED, INITIATED, STARTED
+
+
+@csrf_exempt
+def rate_the_passenger(request, ride_id):
+    if request.method == 'PATCH':
+        data = json.loads(request.body)
+        try:
+            ride = Ride.objects.get(
+                driver__id=request.session['user']['id'], id=ride_id, ride_status__gte=COMPLETED)
+            ride.passenger_rating = data['rating']
+            print(ride.passenger_rating)
+            ride.save()
+            passenger = ride.passenger
+            passenger.rating = Ride.objects.filter(
+                passenger__id=passenger.id, ride_status__gte=COMPLETED).aggregate(rating=Avg('passenger_rating'))['rating']
+            passenger.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Successfully submitted rating',
+            })
+        except Ride.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Ride with given id does not exist'
+            })
+        except KeyError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Please provide all the fields'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a PATCH request with ride id in the parameter'
+        }, status=404)
+
 
 @csrf_exempt
 def complete_ride(request, ride_id):
@@ -35,6 +77,7 @@ def complete_ride(request, ride_id):
             'message': 'Please only provide a PATCH request with ride id in the parameter'
         }, status=404)
 
+
 @csrf_exempt
 def get_all_past_rides_driver(request):
     if request.method == 'GET':
@@ -56,6 +99,7 @@ def get_all_past_rides_driver(request):
             'success': False,
             'message': 'Please only provide a GET request'
         }, status=404)
+
 
 @csrf_exempt
 def get_all_accepted_rides(request):

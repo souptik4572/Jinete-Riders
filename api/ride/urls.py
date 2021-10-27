@@ -1,6 +1,6 @@
 from django.urls import path
-from .views_passenger import book_new_ride, get_all_upcoming_rides, get_particular_ride, get_all_accepted_rides, cancel_particular_ride, get_all_past_rides
-from .views_driver import get_all_initiated_rides, accept_existing_ride, cancel_accepted_ride, get_particular_ride_driver, start_particular_ride, get_all_accepted_rides, get_all_past_rides_driver, complete_ride
+from .views_passenger import book_new_ride, get_all_upcoming_rides, get_particular_ride, get_all_accepted_rides, cancel_particular_ride, get_all_past_rides, rate_the_driver
+from .views_driver import get_all_initiated_rides, accept_existing_ride, cancel_accepted_ride, get_particular_ride_driver, start_particular_ride, get_all_accepted_rides, get_all_past_rides_driver, complete_ride, rate_the_passenger
 
 urlpatterns = [
     # All ride routes on side of passenger
@@ -15,6 +15,8 @@ urlpatterns = [
          name='api.get_particular_ride'),
     path('passenger/<int:ride_id>/cancel/', cancel_particular_ride,
          name='api.cancel_particular_ride'),
+    path('passenger/<int:ride_id>/rate/',
+         rate_the_driver, name='api.rate_the_driver'),
     # All ride routes on side of driver
     path('driver/initiated-rides/', get_all_initiated_rides,
          name='api.get_all_initiated_rides'),
@@ -30,6 +32,8 @@ urlpatterns = [
          name='api.get_all_accepted_rides'),
     path('driver/past-rides/', get_all_past_rides_driver,
          name='api.get_all_past_rides_driver'),
-     path('driver/<int:ride_id>/complete/', complete_ride,
+    path('driver/<int:ride_id>/complete/', complete_ride,
          name='api.complete_ride'),
+    path('driver/<int:ride_id>/rate/', rate_the_passenger,
+         name='api.rate_the_passenger'),
 ]

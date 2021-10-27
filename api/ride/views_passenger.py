@@ -1,14 +1,54 @@
-from django.db.models import Q
+from django.db.models import Avg
 from django.http import JsonResponse
 from .serializers import RideSerializer
 from .models import Ride
 from ..passenger.models import Passenger
 from django.views.decorators.csrf import csrf_exempt
 import json
-from ..utils.ride_type_constants import ACCEPTED, CANCELLED, STARTED
-
+from ..utils.ride_type_constants import ACCEPTED, CANCELLED, STARTED, COMPLETED
 
 # Create your views here.
+
+
+@csrf_exempt
+def rate_the_driver(request, ride_id):
+    if request.method == 'PATCH':
+        data = json.loads(request.body)
+        try:
+            ride = Ride.objects.get(
+                passenger__id=request.session['user']['id'], id=ride_id, ride_status__gte=COMPLETED)
+            ride.driver_rating = data['rating']
+            ride.save()
+            driver = ride.driver
+            driver.rating = Ride.objects.filter(
+                driver__id=driver.id, ride_status__gte=COMPLETED).aggregate(rating=Avg('driver_rating'))['rating']
+            driver.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Successfully submitted rating',
+            })
+        except Ride.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Ride with given id does not exist'
+            })
+        except KeyError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Please provide all the fields'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only provide a PATCH request with ride id in the parameter'
+        }, status=404)
+
+
 @csrf_exempt
 def cancel_particular_ride(request, ride_id):
     if request.method == 'DELETE':

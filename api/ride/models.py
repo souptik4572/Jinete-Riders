@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from ..driver.models import Driver
 from ..passenger.models import Passenger
 from ..utils.ride_type_constants import RIDE_STATUS_TYPES, INITIATED
@@ -14,8 +15,10 @@ class Ride(models.Model):
     destination = models.CharField(max_length=200)
     total_cost = models.IntegerField()
     estimated_time = models.IntegerField()  # in minutes
-    driver_rating = models.IntegerField(default=0)
-    passenger_rating = models.IntegerField(default=0)
+    driver_rating = models.FloatField(
+        default=0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    passenger_rating = models.FloatField(
+        default=0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     ride_status = models.IntegerField(
         choices=RIDE_STATUS_TYPES, default=INITIATED)
 

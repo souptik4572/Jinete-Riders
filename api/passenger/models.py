@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import timedelta
 
 # Create your models here.
@@ -13,7 +14,8 @@ class Passenger(models.Model):
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=60)
     profile_image = models.CharField(max_length=256, blank=True, null=True)
-    rating = models.FloatField(default=2.5)
+    rating = models.FloatField(default=2.5, validators=[
+                               MinValueValidator(0.0), MaxValueValidator(5.0)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
