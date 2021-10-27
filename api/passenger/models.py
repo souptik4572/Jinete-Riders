@@ -8,7 +8,6 @@ from uuid import uuid4
 
 
 class Passenger(models.Model):
-    id = models.TextField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=60)
     email = models.CharField(max_length=320, unique=True)
     phone = models.CharField(max_length=15)

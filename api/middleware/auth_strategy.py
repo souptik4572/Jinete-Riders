@@ -23,25 +23,39 @@ class AuthStrategyMiddleware():
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         if view_func.__name__ in auth_strategy_functions:
-            if 'passenger' in request.path:
-                our_model = Passenger
-                our_serializer = PassengerSerializer
-            elif 'driver' in request.path:
-                our_model = Driver
-                our_serializer = DriverSerializer
-            else:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Such a route does not exist'
-                }, status=404)
             try:
                 token = request.headers.get(
                     'Authorization', None).split(' ')[1]
                 verified_user = jwt.decode(
                     token, ACCESS_SECRET_TOKEN, algorithms=['HS512'])
-                print(verified_user)
+                if 'passenger' in request.path:
+                    if verified_user['user_type'] == 'driver':
+                        return JsonResponse({
+                            'success': False,
+                            'message': 'Invalid token'
+                        })
+                    our_model = Passenger
+                    our_serializer = PassengerSerializer
+                elif 'driver' in request.path:
+                    if verified_user['user_type'] == 'passenger':
+                        return JsonResponse({
+                            'success': False,
+                            'message': 'Invalid token'
+                        })
+                    our_model = Driver
+                    our_serializer = DriverSerializer
+                else:
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Such a route does not exist'
+                    }, status=404)
                 request.session['user'] = our_serializer(
                     our_model.objects.get(pk=verified_user['id'])).data
+            except jwt.InvalidTokenError:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Token is invalid or expired'
+                })
             except Exception as e:
                 return JsonResponse({
                     'success': False,
