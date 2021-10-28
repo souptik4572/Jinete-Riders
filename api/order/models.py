@@ -15,5 +15,8 @@ class Order(models.Model):
     payment_status = models.CharField(
         max_length=50, choices=PAYMENT_STATUS_TYPES, default=PAYMENT_STARTED)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return str(self.ride.passenger.name)

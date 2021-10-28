@@ -21,6 +21,8 @@ class Ride(models.Model):
         default=0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     ride_status = models.IntegerField(
         choices=RIDE_STATUS_TYPES, default=INITIATED)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.source} to {self.destination}"

@@ -22,6 +22,9 @@ class Driver(models.Model):
     car_image = models.CharField(max_length=256)
     driving_license_no = models.CharField(max_length=30)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.name
 
