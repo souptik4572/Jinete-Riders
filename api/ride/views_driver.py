@@ -102,11 +102,12 @@ def get_all_past_rides_driver(request):
 
 
 @csrf_exempt
-def get_all_accepted_rides(request):
+def get_all_accepted_rides_driver(request):
     if request.method == 'GET':
         try:
             accepted_rides = Ride.objects.filter(
-                driver__id=request.session['user']['id'], ride_status=ACCEPTED)
+                driver__id=request.session['user']['id'], ride_status__gte=ACCEPTED)
+            print(accepted_rides)
             return JsonResponse({
                 'success': True,
                 'message': 'All the accepted rides',
