@@ -19,6 +19,57 @@ client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
 
 @csrf_exempt
+def get_particular_order(request, order_id):
+    if request.method == 'GET':
+        try:
+            order = Order.objects.get(
+                ride__passenger__id=request.session['user']['id'], id=order_id)
+            return JsonResponse({
+                'success': True,
+                'message': 'The particular order',
+                'order': OrderSerializer(order).data
+            }, status=200)
+        except Order.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Order with given id does not exist'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, status=404)
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only send a GET request for getting particular order'
+        }, status=404)
+
+
+@csrf_exempt
+def get_all_orders(request):
+    if request.method == 'GET':
+        try:
+            orders = Order.objects.filter(
+                ride__passenger__id=request.session['user']['id']).all()
+            return JsonResponse({
+                'success': True,
+                'message': 'All the previous orders',
+                'orders': OrderSerializer(orders, many=True).data
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, status=404)
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please only send a GET request for getting all orders'
+        }, status=404)
+
+
+@csrf_exempt
 def verify_payment_order(request, ride_id):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -46,13 +97,13 @@ def verify_payment_order(request, ride_id):
                         'success': True,
                         'message': 'Successfully payment completed',
                         'order': OrderSerializer(order).data
-                    })
+                    }, status=201)
                 except Exception as e:
                     return JsonResponse({
                         'success': False,
                         'message': 'Failed to capture payment',
                         'error': str(e)
-                    })
+                    }, status=404)
             return JsonResponse({
                 'test': 'live'
             })
@@ -70,7 +121,7 @@ def verify_payment_order(request, ride_id):
             return JsonResponse({
                 'success': False,
                 'message': 'Please provide all the fields'
-            })
+            }, status=404)
         except Exception as e:
             return JsonResponse({
                 'success': False,
