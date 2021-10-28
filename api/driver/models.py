@@ -20,7 +20,7 @@ class Driver(models.Model):
     car_name = models.CharField(max_length=50)
     car_number = models.CharField(max_length=30)
     car_image = models.CharField(max_length=256)
-    driving_license_no = models.CharField(max_length=15)
+    driving_license_no = models.CharField(max_length=30)
 
     def __str__(self):
         return self.name
