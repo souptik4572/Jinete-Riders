@@ -1,6 +1,5 @@
 from django.db.models import Avg
 from django.http import JsonResponse
-from rest_framework.fields import NOT_READ_ONLY_REQUIRED
 from .serializers import RideSerializer
 from .models import Ride
 from ..driver.models import Driver

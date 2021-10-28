@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'api.passenger',
     'api.driver',
     'api.ride',
+    'api.order',
 ]
 
 MIDDLEWARE = [
