@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register_driver, login_driver, edit_driver_data, request_password_reset, update_password
+from .views import register_driver, login_driver, edit_driver_data, request_password_reset, update_password, get_profile_driver
 
 urlpatterns = [
     path('register/', register_driver, name='api.register_driver'),
@@ -9,4 +9,6 @@ urlpatterns = [
          name='api.edit_driver_data'),
     path('request-password-reset/', request_password_reset,
          name='api.request_password_reset'),
+    path('profile/', get_profile_driver,
+         name='api.get_profile_driver'),
 ]

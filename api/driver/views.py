@@ -23,6 +23,31 @@ def are_passwords_matching(given_password, actual_password):
 
 # Create your views here.
 
+@csrf_exempt
+def get_profile_driver(request):
+    if request.method == 'GET':
+        try:
+            passenger = Driver.objects.get(pk=request.session['user']['id'])
+            return JsonResponse({
+                'success': True,
+                'message': 'Passenger profile data',
+                'driver': DriverSerializer(passenger).data
+            })
+        except Driver.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Passenger does not exist'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, 404)
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please send a GET request only for getting profile data'
+        }, 404)
 
 @csrf_exempt
 def update_password(request):
