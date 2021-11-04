@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register_passenger, login_passenger, edit_passenger_data, request_password_reset, update_password
+from .views import register_passenger, login_passenger, edit_passenger_data, request_password_reset, update_password, get_profile_passenger
 
 urlpatterns = [
     path('register/', register_passenger, name='api.register_passenger'),
@@ -9,4 +9,6 @@ urlpatterns = [
          name='acpi.edit_passenger_data'),
     path('request-password-reset/', request_password_reset,
          name='api.request_password_reset'),
+    path('profile/', get_profile_passenger,
+         name='api.get_profile_passenger'),
 ]
