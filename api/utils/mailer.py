@@ -3,7 +3,6 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from decouple import config
 
-from decouple import config
 sendgrid_key = config("SENDGRID_API_KEY")
 PASSWORD_RESET_EMAIL_TEMPLATE_ID = config('PASSWORD_RESET_EMAIL_TEMPLATE_ID')
 
