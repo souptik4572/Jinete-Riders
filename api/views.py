@@ -1,10 +1,7 @@
-from django.http import JsonResponse
+from django.shortcuts import render
 
 # Create your views here.
 
 
 def home(request):
-    return JsonResponse({
-        'success': True,
-        'message': 'Welcome to Jinete'
-    })
+    return render(request, 'index.html')
