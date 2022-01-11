@@ -24,10 +24,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-ENVIRONMENT = config('ENVIRONMENT')
+
+# The hosted database url, here PostgrSQL is being used
 DATABASE_URL = config('DATABASE_URL')
 
+# The value of environment, either 'profuction' or 'development'
+ENVIRONMENT = config('ENVIRONMENT')
+
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True if ENVIRONMENT != 'production' else False
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -68,7 +73,9 @@ ROOT_URLCONF = 'jinete.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

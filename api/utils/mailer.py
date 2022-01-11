@@ -5,6 +5,7 @@ from decouple import config
 
 sendgrid_key = config("SENDGRID_API_KEY")
 PASSWORD_RESET_EMAIL_TEMPLATE_ID = config('PASSWORD_RESET_EMAIL_TEMPLATE_ID')
+FROM_EMAIL = config('FROM_EMAIL')
 
 
 def allocate_user(is_driver): return 'driver' if is_driver else 'passenger'
@@ -12,7 +13,7 @@ def allocate_user(is_driver): return 'driver' if is_driver else 'passenger'
 
 def send_password_reset_email(data, is_driver = False):
     reset_password_link = f"jinete.com/passwordReset?token={data['token']}&id={data['id']}"
-    message = Mail(from_email='yunoasta6602@gmail.com',
+    message = Mail(from_email=FROM_EMAIL,
                    to_emails=[data['receiver']])
     message.dynamic_template_data = {
         'reset_password_url': reset_password_link,

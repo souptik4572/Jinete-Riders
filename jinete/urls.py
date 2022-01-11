@@ -15,8 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect
+
+
+def redirect_to_index(request):
+    return redirect('api/')
+
 
 urlpatterns = [
+    path('', redirect_to_index, name='redirect_to_index'),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls'))
 ]
